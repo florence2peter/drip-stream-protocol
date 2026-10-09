@@ -11,8 +11,17 @@ import {
   getRpcServer,
   Stream,
   CONTRACT_ID,
+  NETWORK_PASSPHRASE,
 } from "@/lib/stellar";
-import { Contract, scValToNative } from "@stellar/stellar-sdk";
+import {
+  Account,
+  Contract,
+  TransactionBuilder,
+  nativeToScVal,
+  rpc as SorobanRpc,
+  scValToNative,
+  xdr,
+} from "@stellar/stellar-sdk";
 
 interface UseStreamResult {
   stream: Stream | null;
@@ -20,6 +29,53 @@ interface UseStreamResult {
   error: string | null;
   liveCollectible: string;
   refresh: () => void;
+}
+
+/** Build a read-only simulate call for get_stream(stream_id). */
+async function simulateGetStream(
+  streamId: bigint
+): Promise<Stream | null> {
+  const server = getRpcServer();
+  const contract = new Contract(CONTRACT_ID);
+
+  // Placeholder source — simulateTransaction does not require a funded account.
+  const dummy = new Account(
+    "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF",
+    "0"
+  );
+
+  const tx = new TransactionBuilder(dummy, {
+    fee: "100",
+    networkPassphrase: NETWORK_PASSPHRASE,
+  })
+    .addOperation(
+      contract.call("get_stream", nativeToScVal(streamId, { type: "u64" }))
+    )
+    .setTimeout(60)
+    .build();
+
+  const sim = await server.simulateTransaction(tx);
+
+  if (SorobanRpc.Api.isSimulationError(sim)) {
+    throw new Error(`Simulation failed: ${sim.error}`);
+  }
+  if (!SorobanRpc.Api.isSimulationSuccess(sim) || !sim.result) {
+    return null;
+  }
+
+  const native = scValToNative(sim.result.retval) as Record<string, unknown>;
+  return {
+    sender: String(native.sender),
+    recipient: String(native.recipient),
+    rate_per_sec: BigInt(native.rate_per_sec as bigint | number | string),
+    start_time: BigInt(native.start_time as bigint | number | string),
+    end_time: BigInt(native.end_time as bigint | number | string),
+    deposit: BigInt(native.deposit as bigint | number | string),
+    collected: BigInt(native.collected as bigint | number | string),
+    paused_duration: BigInt(native.paused_duration as bigint | number | string),
+    pause_start: BigInt(native.pause_start as bigint | number | string),
+    status: native.status as Stream["status"],
+  };
 }
 
 export function useStream(streamId: bigint | null): UseStreamResult {
@@ -34,17 +90,7 @@ export function useStream(streamId: bigint | null): UseStreamResult {
     setLoading(true);
     setError(null);
     try {
-      const server = getRpcServer();
-      const contract = new Contract(CONTRACT_ID);
-      // Use simulateTransaction to call a view function cheaply.
-      const { xdr: resultXdr } = await server.simulateTransaction(
-        // We build a minimal read-only call here.
-        // In production this would use the generated contract client.
-        {} as any
-      );
-      // For the demo, we parse the raw scVal.
-      // In a full integration, use the generated TS bindings from `stellar contract bindings typescript`.
-      const parsed = scValToNative(resultXdr as any) as Stream;
+      const parsed = await simulateGetStream(streamId);
       setStream(parsed);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to fetch stream");

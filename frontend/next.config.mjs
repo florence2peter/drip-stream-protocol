@@ -1,8 +1,6 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-  // Allow BigInt serialisation in JSON responses
   experimental: {
     serverActions: { allowedOrigins: ["localhost:3000"] },
   },

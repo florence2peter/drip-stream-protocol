@@ -8,7 +8,7 @@ import {
   Contract,
   Keypair,
   Networks,
-  SorobanRpc,
+  rpc as SorobanRpc,
   TransactionBuilder,
   scValToNative,
   xdr,
