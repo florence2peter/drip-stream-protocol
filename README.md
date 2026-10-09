@@ -1,20 +1,8 @@
 # 💧 Drip Stream Protocol
 
-> **Continuous per-second token streaming and weighted Drip Lists — natively on Stellar Soroban.**
-> Built for the [Drips Wave](https://optimism.drips.network) ecosystem to power the *Fix → Merge → Earn* contributor reward cycle on Stellar.
+> Continuous per-second token streaming and weighted Drip Lists — natively on Stellar Soroban.
 
----
-
-## Why this project exists
-
-[Drips Wave](https://optimism.drips.network) runs recurring one-week contribution sprints where open-source contributors fix issues in Stellar repos and earn USDC rewards. Today those rewards are disbursed via EVM-based Drips contracts on Optimism.
-
-**Drip Stream Protocol** brings the two core Drips primitives — **Streams** (continuous per-second transfers) and **Drip Lists** (weighted recipient splits) — natively to Stellar/Soroban, so the entire Drips Wave funding loop can run on Stellar without bridging.
-
-This makes it directly eligible for:
-- **Stellar Community Fund (SCF)** — DeFi / payments track
-- **Drips Wave** open-source contribution grants
-- **Stellar i³ Awards** — interoperability + impact category
+Lock a deposit, let a recipient accrue tokens every second, split payouts across weighted lists with a single call. No oracles — pure ledger timestamps.
 
 ---
 
@@ -148,7 +136,7 @@ node --version
 ### 1. Clone
 
 ```bash
-git clone https://github.com/drips-wave/drip-stream-protocol.git
+git clone https://github.com/florence2peter/drip-stream-protocol.git
 cd drip-stream-protocol
 ```
 
@@ -235,13 +223,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## Drips Wave Integration
+## Use Cases
 
-This contract is purpose-built for [Drips Wave on Stellar](https://optimism.drips.network):
-
-1. **Wave Pool** — Maintainer creates a Drip List with contributor addresses weighted by points earned.
-2. **Drip** — At wave end, the pool contract calls `drip(list_id, wave_pool_amount)` — contributors are paid in one transaction.
-3. **Streaming rewards** — For longer engagements, maintainers can `create_stream()` so contributors earn continuously as they work.
+- **Continuous contributor rewards** — Maintainers create streams so contributors earn per-second while working on open-source issues.
+- **Weighted pool payouts** — Create a Drip List with addresses weighted by contribution; a single `drip()` call splits the pool across everyone in one transaction.
+- **Vesting / payroll** — Any scenario requiring continuous, interruptible token transfers with full lifecycle control.
 
 ---
 
@@ -253,12 +239,14 @@ This contract is purpose-built for [Drips Wave on Stellar](https://optimism.drip
 4. Run `cargo test --features testutils` and `cargo clippy`
 5. Open a PR against `main`
 
+Check the [open issues](https://github.com/florence2peter/drip-stream-protocol/issues) for tasks tagged `good first issue` or `help wanted`.
+
 ---
 
 ## License
 
-MIT © Drips Wave / Stellar Contributors
+MIT © Drip Stream Protocol Contributors
 
 ---
 
-*Built with ❤️ for the Stellar ecosystem — submitted to Drips Wave as an open-source contribution.*
+*Built for the Stellar ecosystem.*
