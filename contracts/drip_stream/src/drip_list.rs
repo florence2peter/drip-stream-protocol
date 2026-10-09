@@ -10,7 +10,7 @@
 //! Dust (due to integer rounding) is kept in the contract and accumulates
 //! negligibly; a future governance call can sweep it.
 
-use soroban_sdk::{Address, Env, Vec};
+use soroban_sdk::{panic_with_error, Address, Env, Vec};
 
 use crate::errors::Error;
 use crate::token;

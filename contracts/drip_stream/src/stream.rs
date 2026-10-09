@@ -9,7 +9,7 @@
 //!
 //! This is purely computed on-chain from ledger timestamps — no off-chain oracle needed.
 
-use soroban_sdk::{Address, Env};
+use soroban_sdk::{panic_with_error, Address, Env};
 
 use crate::errors::Error;
 use crate::token;
