@@ -1,0 +1,45 @@
+[package]
+name = "drip-stream-protocol"
+version = "0.1.0"
+edition = "2021"
+authors = ["Drips Wave / Stellar Contributors"]
+description = "Continuous per-second token streaming and weighted Drip List splits on Stellar Soroban"
+license = "MIT"
+repository = "https://github.com/drips-wave/drip-stream-protocol"
+keywords = ["stellar", "soroban", "streaming", "payments", "drips"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+testutils = ["soroban-sdk/testutils"]
+
+[dependencies]
+soroban-sdk = { version = "22.0.0" }
+
+[dev-dependencies]
+soroban-sdk = { version = "22.0.0", features = ["testutils"] }
+
+[[test]]
+name = "stream_tests"
+path = "../../tests/stream_tests.rs"
+required-features = ["testutils"]
+
+[[test]]
+name = "drip_list_tests"
+path = "../../tests/drip_list_tests.rs"
+required-features = ["testutils"]
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true
+
+[profile.release-with-logs]
+inherits = "release"
+debug-assertions = true

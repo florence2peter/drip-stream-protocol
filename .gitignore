@@ -1,0 +1,30 @@
+# Rust / Cargo
+/target
+**/*.rs.bk
+Cargo.lock
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env*.local
+
+# Deployment secrets (never commit)
+.env
+*.secret
+deployer.key
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test artifacts
+/tmp/
