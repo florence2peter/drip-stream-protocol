@@ -21,6 +21,7 @@ jobs:
         with:
           toolchain: "1.88.0"
           targets: wasm32-unknown-unknown
+          components: clippy
 
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
